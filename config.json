@@ -1,0 +1,113 @@
+{
+  "log": {
+    "access": "",
+    "error": "",
+    "loglevel": "warning"
+  },
+  "policy": {
+    "levels": {
+      "0": {
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": false,
+        "statsUserDownlink": false,
+        "bufferSize": 10240
+      },
+      "1": {
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": true,
+        "statsUserDownlink": true,
+        "bufferSize": 10240
+      }
+    },
+    "system": {
+      "statsInboundUplink": false,
+      "statsInboundDownlink": false
+    }
+  },
+  "dns": {
+    "servers": ["8.8.8.8", "8.8.4.4", "1.1.1.1", "1.0.0.1"]
+  },
+  "inbounds": [
+    {
+      "port": 28824,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "PLACEHOLDER_VMESS_PASSWD",
+            "level": 0,
+            "alterId": 256,
+            "security": "auto",
+            "email": "vmess.ws@v2ray.com"
+          }
+        ],
+        "disableInsecureEncryption": true
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "PLACEHOLDER_VMESS_PATH"
+        }
+      },
+      "tag": "vmin"
+    },
+    {
+      "port": 28827,
+      "protocol": "shadowsocks",
+      "settings": {
+        "method": "aes-128-gcm",
+        "ota": false,
+        "password": "PLACEHOLDER_SS_PASSWD",
+        "network": "tcp"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "PLACEHOLDER_SS_PATH"
+        }
+      },
+      "tag": "ssin"
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "reject"
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "domain": ["geosite:cn", "geosite:category-ads-all"],
+        "inboundTag": ["vmin", "ssin"],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": ["geosite:geolocation-!cn"],
+        "inboundTag": ["vmin", "ssin"],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": ["geoip:cn", "geoip:private"],
+        "inboundTag": ["vmin", "ssin"],
+        "outboundTag": "direct"
+      }
+    ]
+  }
+}
