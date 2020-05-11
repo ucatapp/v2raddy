@@ -1,8 +1,7 @@
 FROM alpine:latest
 ARG CADDY_NAME=caddy_2.0.0_linux_amd64.tar.gz
 
-RUN apk update && \
-    apk add ca-certificates supervisor curl tar && \
+RUN apk --no-cache add ca-certificates supervisor curl tar && \
     curl -sL -o /tmp/v2ray.zip https://github.com/v2ray/v2ray-core/releases/latest/download/v2ray-linux-64.zip && \
     curl -sL -o /tmp/caddy.tar.gz https://github.com/caddyserver/caddy/releases/latest/download/$CADDY_NAME && \
     mkdir -p /tmp/caddy && \
