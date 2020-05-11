@@ -1,27 +1,24 @@
 FROM alpine:latest
-
-RUN apk update && apk add ca-certificates supervisor curl tar
-
-ARG V2RAY_NAME=v2ray-linux-64.zip
 ARG CADDY_NAME=caddy_2.0.0_linux_amd64.tar.gz
-RUN curl -sL -o /tmp/v2ray.zip https://github.com/v2ray/v2ray-core/releases/latest/download/$V2RAY_NAME
-RUN curl -sL -o /tmp/caddy.tar.gz https://github.com/caddyserver/caddy/releases/latest/download/$CADDY_NAME
 
-RUN mkdir -p /tmp/caddy && tar -zxf /tmp/caddy.tar.gz -C /tmp/caddy
-RUN mkdir -p /tmp/v2ray && unzip -oq -d /tmp/v2ray /tmp/v2ray.zip
-
-RUN mkdir -p /usr/bin/v2ray && \
+RUN apk update && \
+    apk add ca-certificates supervisor curl tar && \
+    curl -sL -o /tmp/v2ray.zip https://github.com/v2ray/v2ray-core/releases/latest/download/v2ray-linux-64.zip && \
+    curl -sL -o /tmp/caddy.tar.gz https://github.com/caddyserver/caddy/releases/latest/download/$CADDY_NAME && \
+    mkdir -p /tmp/caddy && \
+    tar -zxf /tmp/caddy.tar.gz -C /tmp/caddy && \
+    mkdir -p /tmp/v2ray && \
+    unzip -oq -d /tmp/v2ray /tmp/v2ray.zip && \
+    mkdir -p /usr/bin/v2ray && \
     cp /tmp/v2ray/v2ray /usr/bin/v2ray && \
     cp /tmp/v2ray/v2ctl /usr/bin/v2ray && \
     cp /tmp/v2ray/geoip.dat /usr/bin/v2ray && \
     cp /tmp/v2ray/geosite.dat /usr/bin/v2ray &&\
     chmod +x /usr/bin/v2ray/v2ctl && \
-    chmod +x /usr/bin/v2ray/v2ray
-
-RUN cp /tmp/caddy/caddy /usr/bin && \
-    chmod +x /usr/bin/caddy
-
-RUN rm -rf /tmp/*
+    chmod +x /usr/bin/v2ray/v2ray && \
+    cp /tmp/caddy/caddy /usr/bin && \
+    chmod +x /usr/bin/caddy && \
+    rm -rf /tmp/*
 
 COPY index.html /usr/share/caddy/index.html
 COPY supervisord.conf /etc/supervisord.conf
