@@ -1,22 +1,39 @@
+FROM golang:alpine as builder
+
+WORKDIR /src
+
+RUN apk add --no-cache git ca-certificates
+
+RUN git clone -b master https://github.com/caddyserver/caddy.git --single-branch
+RUN git clone -b master https://github.com/v2fly/v2ray-core.git v2ray --single-branch
+
+WORKDIR /src/caddy/cmd/caddy
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -tags netgo -ldflags '-extldflags "-static" -s -w' -o /usr/bin/caddy
+
+RUN mkdir -p /usr/bin/v2ray
+WORKDIR /src/v2ray/main
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -tags netgo -ldflags '-extldflags "-static" -s -w' -o /usr/bin/v2ray/v2ray
+
+WORKDIR /src/v2ray/infra/control/main
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -tags netgo -ldflags '-extldflags "-static" -s -w' -o /usr/bin/v2ray/v2ctl
+
+# RUN curl -sL -o /usr/bin/v2ray/geosite.dat "https://github.com/v2ray/domain-list-community/raw/release/dlc.dat"
+# RUN curl -sL -o /usr/bin/v2ray/geoip.dat "https://github.com/v2ray/geoip/raw/release/geoip.dat"
+RUN curl -sL -o /usr/bin/v2ray/geosite.dat https://github.com/Loyalsoldier/v2ray-rules-dat/raw/release/geosite.dat
+RUN curl -sL -o /usr/bin/v2ray/geoip.dat https://github.com/Loyalsoldier/v2ray-rules-dat/raw/release/geoip.dat
+
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates supervisor curl tar && \
-    curl -sL -o /tmp/v2ray.zip https://github.com/v2ray/v2ray-core/releases/latest/download/v2ray-linux-64.zip && \
-    curl --silent 'https://api.github.com/repos/caddyserver/caddy/releases/latest' | grep 'browser_download_url' | grep 'linux_amd64.tar.gz' | awk '{print $2}' | xargs curl -sL -o /tmp/caddy.tar.gz --url && \
-    mkdir -p /tmp/caddy && \
-    tar -zxf /tmp/caddy.tar.gz -C /tmp/caddy && \
-    mkdir -p /tmp/v2ray && \
-    unzip -oq -d /tmp/v2ray /tmp/v2ray.zip && \
-    mkdir -p /usr/bin/v2ray && \
-    cp /tmp/v2ray/v2ray /usr/bin/v2ray && \
-    cp /tmp/v2ray/v2ctl /usr/bin/v2ray && \
-    cp /tmp/v2ray/geoip.dat /usr/bin/v2ray && \
-    cp /tmp/v2ray/geosite.dat /usr/bin/v2ray &&\
-    chmod +x /usr/bin/v2ray/v2ctl && \
-    chmod +x /usr/bin/v2ray/v2ray && \
-    cp /tmp/caddy/caddy /usr/bin && \
-    chmod +x /usr/bin/caddy && \
-    rm -rf /tmp/*
+RUN apk --no-cache add ca-certificates supervisor
+
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+COPY --from=builder /usr/bin/v2ray/v2ray /usr/bin/v2ray/v2ray
+COPY --from=builder /usr/bin/v2ray/v2ctl /usr/bin/v2ray/v2ctl
+COPY --from=builder /usr/bin/v2ray/geoip.dat /usr/bin/v2ray/geoip.dat
+COPY --from=builder /usr/bin/v2ray/geosite.dat /usr/bin/v2ray/geosite.dat
 
 COPY index.html /usr/share/caddy/index.html
 COPY supervisord.conf /etc/supervisord.conf
