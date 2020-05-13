@@ -2,7 +2,7 @@ FROM golang:alpine as builder
 
 WORKDIR /src
 
-RUN apk add --no-cache git ca-certificates
+RUN apk add --no-cache git curl ca-certificates
 
 RUN git clone -b master https://github.com/caddyserver/caddy.git --single-branch
 RUN git clone -b master https://github.com/v2fly/v2ray-core.git v2ray --single-branch
