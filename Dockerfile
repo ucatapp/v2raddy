@@ -14,11 +14,11 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 RUN mkdir -p /usr/bin/v2ray
 WORKDIR /src/v2ray/main
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -trimpath -tags netgo -ldflags '-extldflags "-static" -s -w' -o /usr/bin/v2ray/v2ray
+    go build -trimpath -ldflags "-s -w" -o /usr/bin/v2ray/v2ray
 
 WORKDIR /src/v2ray/infra/control/main
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -trimpath -tags netgo -ldflags '-extldflags "-static" -s -w' -o /usr/bin/v2ray/v2ctl
+    go build -trimpath -tags confonly -ldflags "-s -w" -o /usr/bin/v2ray/v2ctl
 
 # RUN curl -sL -o /usr/bin/v2ray/geosite.dat "https://github.com/v2ray/domain-list-community/raw/release/dlc.dat"
 # RUN curl -sL -o /usr/bin/v2ray/geoip.dat "https://github.com/v2ray/geoip/raw/release/geoip.dat"

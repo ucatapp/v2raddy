@@ -40,9 +40,9 @@
       "settings": {
         "clients": [
           {
-            "id": "PLACEHOLDER_VMESS_PASSWD",
+            "id": "PLACEHOLDER_VMESS_WS_PASSWD",
             "level": 0,
-            "alterId": 256,
+            "alterId": 128,
             "security": "auto",
             "email": "vmess.ws@v2ray.com"
           }
@@ -52,10 +52,34 @@
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "PLACEHOLDER_VMESS_PATH"
+          "path": "PLACEHOLDER_VMESS_WS_PATH"
         }
       },
-      "tag": "vmin"
+      "tag": "vmwsin"
+    },
+    {
+      "port": 28825,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "PLACEHOLDER_VMESS_H2_PASSWD",
+            "level": 0,
+            "alterId": 128,
+            "security": "auto",
+            "email": "vmess.h2@v2ray.com"
+          }
+        ],
+        "disableInsecureEncryption": true
+      },
+      "streamSettings": {
+        "network": "h2",
+        "security": "none",
+        "httpSettings": {
+          "path": "PLACEHOLDER_VMESS_H2_PATH"
+        }
+      },
+      "tag": "vmh2in"
     },
     {
       "port": 28827,
@@ -63,16 +87,16 @@
       "settings": {
         "method": "aes-128-gcm",
         "ota": false,
-        "password": "PLACEHOLDER_SS_PASSWD",
+        "password": "PLACEHOLDER_SS_WS_PASSWD",
         "network": "tcp"
       },
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "PLACEHOLDER_SS_PATH"
+          "path": "PLACEHOLDER_SS_WS_PATH"
         }
       },
-      "tag": "ssin"
+      "tag": "sswsin"
     }
   ],
   "outbounds": [
@@ -93,19 +117,16 @@
       {
         "type": "field",
         "domain": ["geosite:cn", "geosite:category-ads-all"],
-        "inboundTag": ["vmin", "ssin"],
         "outboundTag": "direct"
       },
       {
         "type": "field",
         "domain": ["geosite:geolocation-!cn"],
-        "inboundTag": ["vmin", "ssin"],
         "outboundTag": "direct"
       },
       {
         "type": "field",
         "ip": ["geoip:cn", "geoip:private"],
-        "inboundTag": ["vmin", "ssin"],
         "outboundTag": "direct"
       }
     ]

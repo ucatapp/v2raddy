@@ -16,38 +16,58 @@ if [ $DOMAIN ]; then
     DOMAIN=${DOMAIN//\//\\\/}
     sed -i "s/PLACEHOLDER_DOMAIN/$DOMAIN/g" /etc/caddy/Caddyfile
 fi
-if [ $VMESS_PATH ]; then
-    VMESS_PATH=${VMESS_PATH//\\/\\\\}
-    VMESS_PATH=${VMESS_PATH//\//\\\/}
-    sed -i "s/PLACEHOLDER_VMESS_PATH/$VMESS_PATH/g" /etc/v2ray/config.json
-    sed -i "s/PLACEHOLDER_VMESS_PATH/$VMESS_PATH/g" /etc/caddy/Caddyfile
+if [ $PATH_BASE ]; then
+    VMESS_WS_PATH="${PATH_BASE}vm"
+    SS_WS_PATH="${PATH_BASE}ss"
+    VMESS_H2_PATH="${PATH_BASE}h2"
 fi
-if [ $VMESS_PASSWD ]; then
-    VMESS_PASSWD=${VMESS_PASSWD//\\/\\\\}
-    VMESS_PASSWD=${VMESS_PASSWD//\//\\\/}
-    sed -i "s/PLACEHOLDER_VMESS_PASSWD/$VMESS_PASSWD/g" /etc/v2ray/config.json
+if [ $PASSWD_ALL ]; then
+    VMESS_WS_PASSWD=$PASSWD_ALL
+    SS_WS_PASSWD=$PASSWD_ALL
+    VMESS_H2_PASSWD=$PASSWD_ALL
 fi
-if [ $SS_PATH ]; then
-    SS_PATH=${SS_PATH//\\/\\\\}
-    SS_PATH=${SS_PATH//\//\\\/}
-    sed -i "s/PLACEHOLDER_SS_PATH/$SS_PATH/g" /etc/v2ray/config.json
-    sed -i "s/PLACEHOLDER_SS_PATH/$SS_PATH/g" /etc/caddy/Caddyfile
+if [ $VMESS_WS_PATH ]; then
+    VMESS_WS_PATH=${VMESS_WS_PATH//\\/\\\\}
+    VMESS_WS_PATH=${VMESS_WS_PATH//\//\\\/}
+    sed -i "s/PLACEHOLDER_VMESS_WS_PATH/$VMESS_WS_PATH/g" /etc/v2ray/config.json
+    sed -i "s/PLACEHOLDER_VMESS_WS_PATH/$VMESS_WS_PATH/g" /etc/caddy/Caddyfile
 fi
-if [ $SS_PASSWD ]; then
-    SS_PASSWD=${SS_PASSWD//\\/\\\\}
-    SS_PASSWD=${SS_PASSWD//\//\\\/}
-    sed -i "s/PLACEHOLDER_SS_PASSWD/$SS_PASSWD/g" /etc/v2ray/config.json
+if [ $VMESS_WS_PASSWD ]; then
+    VMESS_WS_PASSWD=${VMESS_WS_PASSWD//\\/\\\\}
+    VMESS_WS_PASSWD=${VMESS_WS_PASSWD//\//\\\/}
+    sed -i "s/PLACEHOLDER_VMESS_WS_PASSWD/$VMESS_WS_PASSWD/g" /etc/v2ray/config.json
 fi
-
+if [ $SS_WS_PATH ]; then
+    SS_WS_PATH=${SS_WS_PATH//\\/\\\\}
+    SS_WS_PATH=${SS_WS_PATH//\//\\\/}
+    sed -i "s/PLACEHOLDER_SS_WS_PATH/$SS_WS_PATH/g" /etc/v2ray/config.json
+    sed -i "s/PLACEHOLDER_SS_WS_PATH/$SS_WS_PATH/g" /etc/caddy/Caddyfile
+fi
+if [ $SS_WS_PASSWD ]; then
+    SS_WS_PASSWD=${SS_WS_PASSWD//\\/\\\\}
+    SS_WS_PASSWD=${SS_WS_PASSWD//\//\\\/}
+    sed -i "s/PLACEHOLDER_SS_WS_PASSWD/$SS_WS_PASSWD/g" /etc/v2ray/config.json
+fi
+if [ $VMESS_H2_PATH ]; then
+    VMESS_H2_PATH=${VMESS_H2_PATH//\\/\\\\}
+    VMESS_H2_PATH=${VMESS_H2_PATH//\//\\\/}
+    sed -i "s/PLACEHOLDER_VMESS_H2_PATH/$VMESS_H2_PATH/g" /etc/v2ray/config.json
+    sed -i "s/PLACEHOLDER_VMESS_H2_PATH/$VMESS_H2_PATH/g" /etc/caddy/Caddyfile
+fi
+if [ $VMESS_H2_PASSWD ]; then
+    VMESS_H2_PASSWD=${VMESS_H2_PASSWD//\\/\\\\}
+    VMESS_H2_PASSWD=${VMESS_H2_PASSWD//\//\\\/}
+    sed -i "s/PLACEHOLDER_VMESS_H2_PASSWD/$VMESS_H2_PASSWD/g" /etc/v2ray/config.json
+fi
 
 # check your config if replace all placeholder
-caddy_replace=$(cat /etc/caddy/Caddyfile | grep -E "PLACEHOLDER_DOMAIN|PLACEHOLDER_SS_PATH|PLACEHOLDER_VMESS_PATH")
+caddy_replace=$(cat /etc/caddy/Caddyfile | grep -E "PLACEHOLDER_DOMAIN|PLACEHOLDER_VMESS_WS_PATH|PLACEHOLDER_SS_WS_PATH|PLACEHOLDER_VMESS_H2_PATH")
 if [ -n "$caddy_replace" ]; then
     echo "The caddy config not replace all, probably your environment config not set"
     exit 1
 fi
 
-v2ray_replace=$(cat /etc/v2ray/config.json | grep -E "PLACEHOLDER_SS_PATH|PLACEHOLDER_VMESS_PATH|PLACEHOLDER_SS_PASSWD|PLACEHOLDER_VMESS_PASSWD")
+v2ray_replace=$(cat /etc/v2ray/config.json | grep -E "PLACEHOLDER_SS_WS_PATH|PLACEHOLDER_VMESS_H2_PATH|PLACEHOLDER_VMESS_WS_PATH|PLACEHOLDER_VMESS_WS_PASSWD|PLACEHOLDER_SS_WS_PASSWD|PLACEHOLDER_VMESS_H2_PASSWD")
 if [ -n "$v2ray_replace" ]; then
     echo "The v2ray config not replace all, probably your environment config not set"
     exit 1
