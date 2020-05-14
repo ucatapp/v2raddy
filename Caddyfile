@@ -28,8 +28,5 @@ reverse_proxy PLACEHOLDER_VMESS_H2_PATH {
         versions h2c
   }
   header_up Host {http.request.host}
-  header_up X-Forwarded-For {http.request.remote}
-  header_up X-Forwarded-Port {http.request.port}
-  header_up X-Forwarded-Proto {http.request.scheme}
   header_up X-Real-Ip {http.request.scheme}
 }
