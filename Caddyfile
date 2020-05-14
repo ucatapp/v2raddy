@@ -25,8 +25,7 @@ reverse_proxy PLACEHOLDER_VMESS_WS_PATH {
 reverse_proxy PLACEHOLDER_VMESS_H2_PATH {
   to http://127.0.0.1:28825
   transport http {
-        allow_insecure
-        versions 2
+        versions h2c
   }
   header_up Host {http.request.host}
   header_up X-Forwarded-For {http.request.remote}
