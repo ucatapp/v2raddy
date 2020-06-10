@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates supervisor curl tar && \
-    curl -sL -o /tmp/v2ray.zip https://github.com/v2ray/v2ray-core/releases/latest/download/v2ray-linux-64.zip && \
+    curl -sL -o /tmp/v2ray.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip && \
     curl --silent 'https://api.github.com/repos/caddyserver/caddy/releases/latest' | grep 'browser_download_url' | grep 'linux_amd64.tar.gz' | awk '{print $2}' | xargs curl -sL -o /tmp/caddy.tar.gz --url && \
     mkdir -p /tmp/caddy && \
     tar -zxf /tmp/caddy.tar.gz -C /tmp/caddy && \
